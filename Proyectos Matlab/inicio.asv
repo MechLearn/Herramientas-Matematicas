@@ -1,0 +1,30 @@
+function [mundo,posbloques,postubos] = inicio()
+% Escenario inicial (como en tu referencia)
+
+    % --- Bloques 12x24 ---
+    posbloques = ones(12,24,'uint8');  % 1 = aire
+    posbloques(12,:) = 2;              % 2 = baldosa (piso)
+
+    % En esta parte se recrea el mundo inicial, dado en las instrucciones
+    % de la tarea, la primera plataforma respecto al piso.
+    posbloques(8, 12) = 4;
+    posbloques(8, 13) = 3;
+    posbloques(8, 14) = 4;
+    posbloques(8, 15) = 3;
+    posbloques(8, 16) = 4;
+
+    % La segunda plataforma respecto al piso
+    posbloques(4, 13) = 4;
+    posbloques(4, 14) = 3;
+    posbloques(4, 15) = 4;
+
+
+    % La matriz de los tubos, es una matriz reducida a la mitad de la
+    % matriz de posbloques, pues cada tubo representa u
+    postubos = ones(6,12,'uint8');    % 1 = sin tubo, 2 = tub
+
+    postubos(6,10) = 2;
+
+    % --- Render ---
+    mundo = mariomundo(posbloques, postubos);
+end

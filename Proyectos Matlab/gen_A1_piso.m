@@ -1,0 +1,35 @@
+function [b_siguiente, t_igual] = gen_A1_piso(b_pair, t_col)
+
+    %En esta parte se verifica que el tamaño de las matrices de entrada sea
+    %correcto.
+    if ~isequal(size(b_pair),[12 2]), error('b_pair debe ser 12x2'); end
+    if ~isequal(size(t_col), [6 1]),  error('t_col debe ser 6x1');  end
+
+    % En esta parte se llena una variable llamada últimos 2 valores
+    last2 = double(b_pair(12,:));   % valores 1 (aire) o 2 (baldosa)
+
+    % En esta parte se definen probabilidades condicionales distintas para
+    % la generación aleatoria para bloques
+    p22 = 0.90;    % si los valores vienen [2 2], es decir (suelo-suelo), entonces mantiene el piso 
+    p11 = 0.95;    % si los valores vienen [1 1], es decir (hueco-hueco), colocará piso en ese hueco; esto tiene una probabilidad grande para garantizar que no hayan huecos muy grandes
+    p12 = 0.70;    % si los valores vienen mixtos [1 2] o [2 1], es decir (piso-hueco) o (hueco-piso)
+    p21 = 0.70;
+
+    if     isequal(last2,[2 2]), p = p22; % este condicional define a p de la siguiente forma: si last2 viene [2,2], asume la probabilidad de p22
+    elseif isequal(last2,[1 1]), p = p11; % este condicional define a p de la siguiente forma: si last2 viene [1,1], asume la probabilidad de p11
+    elseif isequal(last2,[1 2]), p = p12; % este condicional define a p de la siguiente forma: si last2 viene [1,2], asume la probabilidad de p12
+    else                         p = p21; % este condicional define a p de la siguiente forma: si last2 viene [2,1], asume la probabilidad de p21
+    end
+
+    % En esta parte se crea una nueva matriz 12 x 2, que son los dos
+    % valores siguientes de columna
+    % b_siguiente = ones(12,2,'uint8');  % se inicializa la matriz de 12 x 2 llena de unos, esto garantiza que las filas del 1 al 11 sean intactas, pues en las últimas dos columnas no hay plataforma y si la matriz es 1 en sus valores, significa que es aire, es decir el recuadro negro
+    % b_siguiente(12,1) = uint8( va([1 2],[1-p p]) );  % Se llena el siguiente valor de la fila dando los parámetros a la función va, para la fila 12 columna 1
+    % b_siguiente(12,2) = uint8( va([1 2],[1-p p]) );  % Se llena el siguiente valor de la fila dando los parámetros a la función va, para la fila 12 columna 2
+    b_siguiente = uint8(b_pair);
+    b_siguiente(12,:) = uint8( va([1 2],[1-p p], 1, 2) );
+
+    %Esta parte permite que los tubos no tengan cambios, pues el valor de
+    %entrada es el mismo de salida
+    t_igual = t_col;
+end
